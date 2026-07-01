@@ -1,0 +1,1 @@
+print("🚀 NEXAHIRE-AI Backend Started Successfully!")
