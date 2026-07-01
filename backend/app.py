@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-
+from backend.api.auth import router as auth_router
 from backend.api.routes import router
 from backend.core.config import APP_NAME, APP_VERSION
 
@@ -10,7 +10,7 @@ app = FastAPI(
 )
 
 app.include_router(router)
-
+app.include_router(auth_router)
 
 @app.get("/")
 def home():
