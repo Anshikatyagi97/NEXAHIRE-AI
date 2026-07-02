@@ -2,8 +2,13 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from backend.database.database import get_db
-from backend.schemas.user import RegisterRequest, LoginRequest
+from fastapi.security import OAuth2PasswordRequestForm
+
+from backend.schemas.user import RegisterRequest
+
 from backend.services.auth_service import register_user, login_user
+from backend.core.dependencies import get_current_user
+from backend.models.user import User
 
 router = APIRouter(
     prefix="/auth",
@@ -34,11 +39,18 @@ def register(
 
 @router.post("/login")
 def login(
-    data: LoginRequest,
+    form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
     return login_user(
         db=db,
-        email=data.email,
-        password=data.password
+        email=form_data.username,
+        password=form_data.password
     )
+@router.get("/me")
+def get_my_profile(current_user: User = Depends(get_current_user)):
+    return {
+        "id": current_user.id,
+        "full_name": current_user.full_name,
+        "email": current_user.email
+    }
